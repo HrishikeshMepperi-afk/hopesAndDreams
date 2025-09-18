@@ -49,6 +49,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
     resolver: zodResolver(formSchema),
     defaultValues: {
       workoutHistory: '',
+      medicalHistoryText: '',
     },
   });
 
@@ -160,7 +161,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                     <FormField control={form.control} name="age" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Age</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 30" {...field} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 30" {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -184,14 +185,14 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                     <FormField control={form.control} name="height" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Height (cm)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 175" {...field} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 175" {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <FormField control={form.control} name="weight" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Weight (kg)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 70" {...field} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 70" {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
