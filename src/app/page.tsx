@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Dumbbell, LogOut } from 'lucide-react';
+import { Dumbbell, LogOut, User, UserPlus } from 'lucide-react';
 
 import { OnboardingFlow } from '@/components/onboarding-flow';
 import { WorkoutDisplay } from '@/components/workout-display';
@@ -15,20 +15,29 @@ import useLocalStorage from '@/hooks/use-local-storage';
 import { useAuth, signOut } from '@/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type AppStatus = 'loading' | 'onboarding' | 'generating' | 'reviewing' | 'tracking';
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, isGuest } = useAuth();
   const router = useRouter();
   const [status, setStatus] = useState<AppStatus>('loading');
   const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
-  // Use a user-specific key for local storage
-  const [savedPlan, setSavedPlan] = useLocalStorage<SavedPlan | null>(
-    user ? `health-journey-plan-${user.uid}` : 'health-journey-plan', null
-  );
+  const localStorageKey = user ? `health-journey-plan-${user.uid}` : 'health-journey-plan-guest';
+  const [savedPlan, setSavedPlan] = useLocalStorage<SavedPlan | null>(localStorageKey, null);
   
   const { toast } = useToast();
 
@@ -70,6 +79,12 @@ export default function Home() {
 
   const handleSavePlan = () => {
     if (generatedPlan && userProfile) {
+      if (isGuest) {
+        toast({
+            title: "Guest Mode",
+            description: "Sign up to save your progress permanently.",
+        })
+      }
       setSavedPlan({
         plan: generatedPlan,
         profile: userProfile,
@@ -102,8 +117,14 @@ export default function Home() {
 
   const handleSignOut = async () => {
     await signOut();
+    setSavedPlan(null); // Clear local storage on sign out
     router.push('/login');
   };
+
+  const handleSignUp = () => {
+    router.push('/login');
+  };
+
 
   if (loading || !user) {
     return (
@@ -119,11 +140,40 @@ export default function Home() {
         <Dumbbell className="h-8 w-8 text-primary" />
         <h1 className="text-2xl font-bold font-headline">Health Journey</h1>
       </div>
-      <div className="absolute top-8 right-8">
-        <Button variant="ghost" onClick={handleSignOut}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
-        </Button>
+      <div className="absolute top-8 right-8 flex items-center gap-2">
+        {isGuest ? (
+          <>
+            <Button variant="ghost" onClick={handleSignUp}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Sign Up
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <User className="mr-2 h-4 w-4" />
+                  Guest
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>You are browsing as a guest.</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Your workout plan is saved locally on this device. Sign up to save your progress and access it from anywhere.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Continue as Guest</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSignUp}>Sign Up</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        ) : (
+          <Button variant="ghost" onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        )}
       </div>
       <div className="w-full">
         <AnimatePresence mode="wait">

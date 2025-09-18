@@ -8,12 +8,13 @@ import { Dumbbell, Mail, KeyRound, Loader2, User as UserIcon } from 'lucide-reac
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { signIn, signUp } from '@/firebase/auth';
+import { signIn, signUp, signInAnonymously, useAuth } from '@/firebase/auth';
+import { Separator } from '@/components/ui/separator';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -35,7 +36,9 @@ type SignUpInput = z.infer<typeof signUpSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { setIsGuest } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
 
   const loginForm = useForm<LoginInput>({
@@ -82,6 +85,25 @@ export default function LoginPage() {
     }
   };
 
+  const handleGuestLogin = async () => {
+    setIsGuestLoading(true);
+    try {
+      await signInAnonymously();
+      setIsGuest(true);
+      toast({ title: 'Welcome, Guest!', description: "You're browsing as a guest." });
+      router.push('/');
+    } catch (error: any) {
+       toast({
+        title: 'Guest Login Failed',
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+        setIsGuestLoading(false);
+    }
+  };
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-br from-background via-purple-100 to-orange-100 dark:from-background dark:via-purple-900/20 dark:to-orange-900/20">
        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_400px_at_50%_300px,#fbfbfb36,#0000_50%)] dark:bg-[radial-gradient(circle_400px_at_50%_300px,#ffffff18,#0000_50%)]"></div>
@@ -122,7 +144,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input placeholder="you@example.com" {...field} className="pl-10" />
+                                  <Input placeholder="you@example.com" {...field} />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -138,14 +160,14 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                                  <Input type="password" placeholder="••••••••" {...field} />
                                 </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full" disabled={isLoading || isGuestLoading}>
                           {isLoading ? <Loader2 className="animate-spin" /> : 'Login'}
                         </Button>
                       </form>
@@ -163,7 +185,7 @@ export default function LoginPage() {
                               <FormControl>
                                  <div className="relative">
                                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input placeholder="you@example.com" {...field} className="pl-10" />
+                                  <Input placeholder="you@example.com" {...field} />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -179,7 +201,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                                  <Input type="password" placeholder="••••••••" {...field} />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -195,14 +217,14 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                                  <Input type="password" placeholder="••••••••" {...field} />
                                 </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full" disabled={isLoading || isGuestLoading}>
                           {isLoading ? <Loader2 className="animate-spin" /> : 'Create Account'}
                         </Button>
                       </form>
@@ -212,6 +234,20 @@ export default function LoginPage() {
               </AnimatePresence>
             </Tabs>
           </CardContent>
+           <CardFooter className="flex-col gap-4">
+            <div className="relative w-full flex items-center justify-center my-2">
+              <Separator className="w-full" />
+              <span className="absolute px-2 bg-card text-muted-foreground text-sm">OR</span>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleGuestLogin}
+              disabled={isLoading || isGuestLoading}
+            >
+              {isGuestLoading ? <Loader2 className="animate-spin" /> : <> <UserIcon className="mr-2 h-4 w-4"/> Continue as Guest</>}
+            </Button>
+          </CardFooter>
         </Card>
       </motion.div>
     </main>
