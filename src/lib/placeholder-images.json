@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "pushups",
+      "description": "A person doing push-ups.",
+      "imageUrl": "https://picsum.photos/seed/pushups/600/400",
+      "imageHint": "push-up fitness"
+    },
+    {
+      "id": "squats",
+      "description": "A person doing squats.",
+      "imageUrl": "https://picsum.photos/seed/squats/600/400",
+      "imageHint": "squat exercise"
+    },
+    {
+      "id": "plank",
+      "description": "A person holding a plank position.",
+      "imageUrl": "https://picsum.photos/seed/plank/600/400",
+      "imageHint": "plank core"
+    },
+    {
+      "id": "dumbbell-rows",
+      "description": "A person doing dumbbell rows.",
+      "imageUrl": "https://picsum.photos/seed/dumbbell-rows/600/400",
+      "imageHint": "dumbbell workout"
+    },
+    {
+      "id": "lunges",
+      "description": "A person doing lunges.",
+      "imageUrl": "https://picsum.photos/seed/lunges/600/400",
+      "imageHint": "lunge exercise"
+    },
+    {
+      "id": "bicep-curls",
+      "description": "A person doing bicep curls.",
+      "imageUrl": "https://picsum.photos/seed/bicep-curls/600/400",
+      "imageHint": "bicep curl"
+    },
+    {
+      "id": "jumping-jacks",
+      "description": "A person doing jumping jacks.",
+      "imageUrl": "https://picsum.photos/seed/jumping-jacks/600/400",
+      "imageHint": "cardio workout"
+    },
+    {
+      "id": "crunches",
+      "description": "A person doing crunches.",
+      "imageUrl": "https://picsum.photos/seed/crunches/600/400",
+      "imageHint": "abs workout"
+    },
+     {
+      "id": "default",
+      "description": "A person exercising.",
+      "imageUrl": "https://picsum.photos/seed/exercise/600/400",
+      "imageHint": "exercise fitness"
+    }
+  ]
 }
