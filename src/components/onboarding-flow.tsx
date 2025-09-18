@@ -31,12 +31,13 @@ const formSchema = z.object({
   workoutHistory: z.string().min(10, 'Please describe your workout history briefly.').max(500),
 });
 
+type OnboardingFormValues = z.infer<typeof formSchema>;
+
 interface OnboardingFlowProps {
   onSubmit: (data: UserProfile) => void;
-  isGenerating: boolean;
 }
 
-export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) {
+export function OnboardingFlow({ onSubmit }: OnboardingFlowProps) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [medicalFile, setMedicalFile] = useState<File | null>(null);
@@ -45,7 +46,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
   
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       age: 18,
@@ -63,20 +64,20 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
   const progress = ((step + 1) / totalSteps) * 100;
 
   const handleNext = async () => {
-    const fieldsByStep: (keyof z.infer<typeof formSchema>)[][] = [
+    const fieldsByStep: (keyof OnboardingFormValues)[][] = [
       ['age', 'sex', 'height', 'weight'],
       ['fitnessLevel', 'workoutHistory'],
       ['hasMedicalHistory'],
     ];
-    
-    if (form.getValues('hasMedicalHistory') === 'yes') {
-      fieldsByStep[2].push('medicalHistoryText');
-    }
 
-    const currentFields = fieldsByStep[step] || [];
-    const isValid = await form.trigger(currentFields as any);
+    const currentFields = fieldsByStep[step];
+    const isValid = await form.trigger(currentFields);
     
     if (isValid) {
+      if (step === 2 && form.getValues('hasMedicalHistory') === 'yes' && !form.getValues('medicalHistoryText')) {
+        await form.trigger('medicalHistoryText');
+        return;
+      }
       setDirection(1);
       setStep((s) => Math.min(s + 1, totalSteps));
     }
@@ -120,7 +121,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
   };
 
 
-  const onFinalSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
+  const onFinalSubmit: SubmitHandler<OnboardingFormValues> = (data) => {
     const profileData: UserProfile = {
         age: data.age,
         sex: data.sex,
@@ -148,20 +149,6 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
       opacity: 0,
     }),
   };
-  
-  if (isGenerating) {
-      return (
-          <div className="flex flex-col items-center gap-4 text-center">
-              <motion.div
-                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <Loader2 className="h-20 w-20 text-primary animate-spin" />
-              </motion.div>
-              <p className="text-xl font-semibold text-muted-foreground mt-4 tracking-wider">Crafting your personalized plan...</p>
-            </div>
-      );
-  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
@@ -296,7 +283,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
           </CardContent>
           <CardFooter className="flex justify-between">
             {step > 0 ? (
-              <Button type="button" variant="ghost" onClick={handleBack} disabled={isGenerating}>
+              <Button type="button" variant="ghost" onClick={handleBack}>
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back
               </Button>
             ) : <div />}
@@ -305,8 +292,8 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                 Next <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             ) : (
-              <Button type="submit" disabled={isGenerating}>
-                {isGenerating ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Plan</>) : (<>Get My Plan <Check className="ml-2 h-4 w-4" /></>)}
+              <Button type="submit">
+                Get My Plan <Check className="ml-2 h-4 w-4" />
               </Button>
             )}
           </CardFooter>

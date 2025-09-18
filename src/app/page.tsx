@@ -100,7 +100,7 @@ export default function Home() {
   const handleSignOut = async () => {
     await signOut();
     setSavedPlan(null);
-    // The useEffect hook will handle the redirect to /login
+    router.push('/login');
   };
   
   const handleGenerateNew = () => {
@@ -174,8 +174,8 @@ export default function Home() {
             className="w-full flex justify-center"
           >
             {status === 'loading' && <Loader text="Loading Your Journey..." />}
-            {status === 'onboarding' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={false} />}
-            {status === 'generating' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={true} />}
+            {status === 'onboarding' && <OnboardingFlow onSubmit={handleOnboardingSubmit} />}
+            {status === 'generating' && <Loader text="Crafting your personalized plan..." isGenerating={true} />}
             {status === 'reviewing' && generatedPlan && (
               <WorkoutDisplay plan={generatedPlan} onStartOver={handleGenerateNew} onSavePlan={handleSavePlan} />
             )}
@@ -189,14 +189,14 @@ export default function Home() {
   );
 }
 
-function Loader({ text }: { text: string }) {
+function Loader({ text, isGenerating = false }: { text: string; isGenerating?: boolean }) {
   return (
     <div className="flex flex-col items-center gap-4 text-center">
       <motion.div
-        animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isGenerating ? { rotate: 360 } : { scale: [1, 1.2, 1] }}
+        transition={isGenerating ? { duration: 1, repeat: Infinity, ease: 'linear' } : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <Dumbbell className="h-20 w-20 text-primary" />
+        {isGenerating ? <Loader2 className="h-20 w-20 text-primary" /> : <Dumbbell className="h-20 w-20 text-primary" />}
       </motion.div>
       <p className="text-xl font-semibold text-muted-foreground mt-4 tracking-wider">{text}</p>
     </div>
