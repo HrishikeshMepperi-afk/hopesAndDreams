@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Dumbbell, LogOut, User, UserPlus } from 'lucide-react';
+import { Dumbbell, LogOut, User, UserPlus, Loader2 } from 'lucide-react';
 
 import { OnboardingFlow } from '@/components/onboarding-flow';
 import { WorkoutDisplay } from '@/components/workout-display';
@@ -48,14 +48,24 @@ export default function Home() {
   }, [user, loading, router]);
   
   useEffect(() => {
-    if (user) { // Only run this if the user is loaded
+    // We only want to run this effect when the user object is available
+    if (loading) {
+      setStatus('loading');
+      return;
+    }
+    
+    if (user) {
         if (savedPlan) {
             setStatus('tracking');
         } else {
             setStatus('onboarding');
         }
+    } else {
+        // This case handles when the user signs out.
+        // The other useEffect will redirect to /login.
+        setStatus('loading');
     }
-  }, [savedPlan, user]);
+  }, [savedPlan, user, loading]);
 
 
   const handleOnboardingSubmit = async (profile: UserProfile) => {
@@ -111,17 +121,21 @@ export default function Home() {
   };
   
   const handleGenerateNew = () => {
-    setSavedPlan(null);
-    handleDiscardPlan();
+    setSavedPlan(null); // This will trigger the useEffect to go back to onboarding
+    setGeneratedPlan(null);
+    setUserProfile(null);
   };
 
   const handleSignOut = async () => {
     await signOut();
     setSavedPlan(null); // Clear local storage on sign out
-    router.push('/login');
+    // The useEffect hook will handle the redirect to /login
   };
 
   const handleSignUp = () => {
+    // If a guest signs up, we want to clear their local data
+    // so they start fresh after creating an account.
+    setSavedPlan(null);
     router.push('/login');
   };
 
@@ -187,7 +201,7 @@ export default function Home() {
           >
             {status === 'loading' && <Loader text="Loading Your Journey..." />}
             {status === 'onboarding' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={false} />}
-            {status === 'generating' && <Loader text="Crafting your personalized plan..." />}
+            {status === 'generating' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={true} />}
             {status === 'reviewing' && generatedPlan && (
               <WorkoutDisplay plan={generatedPlan} onSave={handleSavePlan} onDiscard={handleDiscardPlan} />
             )}

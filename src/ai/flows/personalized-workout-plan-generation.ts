@@ -19,7 +19,7 @@ const WorkoutPlanInputSchema = z.object({
   medicalHistory: z
     .string()
     .describe(
-      'The medical history of the user, including any conditions or surgeries. If a PDF was uploaded, this should contain the extracted text from the PDF. If none, it will say "No specific conditions reported."'
+      'The medical history of the user, including any conditions or surgeries. This will be "No specific conditions reported." if the user has not reported any.'
     ),
   fitnessLevel: z
     .string()
@@ -38,7 +38,7 @@ const WorkoutPlanOutputSchema = z.object({
   workoutPlan: z
     .string()
     .describe(
-      'A personalized workout plan tailored to the user, including specific exercises, sets, reps, and rest times.  The workout plan MUST be in markdown format.'
+      'A personalized workout plan tailored to the user, including specific exercises, sets, reps, and rest times. The workout plan MUST be in markdown format.'
     ),
 });
 export type WorkoutPlanOutput = z.infer<typeof WorkoutPlanOutputSchema>;
@@ -68,10 +68,9 @@ const prompt = ai.definePrompt({
   - Fitness Level: {{{fitnessLevel}}}
   - Workout History: {{{workoutHistory}}}
 
-  Include a variety of exercises targeting different muscle groups. For each exercise, specify the number of sets, repetitions, and rest time. You can also include short, helpful tips for some exercises.
+  Include a variety of exercises targeting different muscle groups. For each exercise, specify the number of sets, repetitions (reps), and rest time. You can also include short, helpful tips for some exercises.
 
-  Finally, include this exact disclaimer at the very end of the generated plan, outside of any markdown formatting:
-  "**Important Disclaimer:** This workout plan is AI-generated. Always consult with a qualified healthcare professional or certified personal trainer before starting any new fitness program."
+  Do not include the disclaimer in the generated plan. The application UI will handle the disclaimer.
   `,
 });
 

@@ -64,14 +64,19 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
 
   const handleNext = async () => {
     const fieldsByStep: (keyof z.infer<typeof formSchema>)[][] = [
-      [],
+      [], // Welcome step
       ['age', 'sex', 'height', 'weight'],
       ['fitnessLevel', 'workoutHistory'],
-      ['hasMedicalHistory', 'medicalHistoryText'],
+      ['hasMedicalHistory'],
     ];
+    
+    // Add medicalHistoryText validation only if the user said yes
+    if (form.getValues('hasMedicalHistory') === 'yes') {
+      fieldsByStep[3].push('medicalHistoryText');
+    }
 
     const currentFields = fieldsByStep[step] || [];
-    const isValid = await form.trigger(currentFields);
+    const isValid = await form.trigger(currentFields as any);
     
     if (isValid) {
       setDirection(1);
@@ -118,9 +123,15 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
 
 
   const onFinalSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
-    const profileData = {
-        ...data,
+    const profileData: UserProfile = {
+        age: data.age,
+        sex: data.sex,
+        height: data.height,
+        weight: data.weight,
+        hasMedicalHistory: data.hasMedicalHistory,
         medicalHistoryText: data.hasMedicalHistory === 'yes' ? data.medicalHistoryText : 'No specific conditions reported.',
+        fitnessLevel: data.fitnessLevel,
+        workoutHistory: data.workoutHistory,
     };
     onSubmit(profileData);
   };
@@ -139,6 +150,20 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
       opacity: 0,
     }),
   };
+  
+  if (isGenerating) {
+      return (
+          <div className="flex flex-col items-center gap-4 text-center">
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Loader2 className="h-20 w-20 text-primary animate-spin" />
+              </motion.div>
+              <p className="text-xl font-semibold text-muted-foreground mt-4 tracking-wider">Crafting your personalized plan...</p>
+            </div>
+      );
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
