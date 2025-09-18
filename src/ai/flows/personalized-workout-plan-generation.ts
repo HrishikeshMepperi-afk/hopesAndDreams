@@ -38,7 +38,7 @@ const WorkoutPlanOutputSchema = z.object({
   workoutPlan: z
     .string()
     .describe(
-      'A personalized workout plan tailored to the user, including specific exercises, sets, reps, and rest times. The workout plan MUST be in markdown format.'
+      'A personalized workout plan tailored to the user, including a title, specific exercises, sets, reps, and rest times. The workout plan MUST be in markdown format.'
     ),
 });
 export type WorkoutPlanOutput = z.infer<typeof WorkoutPlanOutputSchema>;
@@ -55,9 +55,11 @@ const prompt = ai.definePrompt({
   output: {schema: WorkoutPlanOutputSchema},
   prompt: `You are an AI personal trainer who generates workout plans based on a user's medical history, fitness level, and workout history.
 
-  Your response MUST be a workout plan in markdown format. Start with a main title using '#'. Use '##' for each day's title (e.g., "## Day 1: Full Body Strength"). Use '###' for each exercise name (e.g., "### Push-ups"). Use bullet points ('-') for details like sets, reps, and rest.
+  Your response MUST be a workout plan in markdown format. Start with a main title for the plan using '#'. Use '##' for each day's title (e.g., "## Day 1: Full Body Strength"). Use '###' for each exercise name (e.g., "### Push-ups"). Use bullet points ('-') for details like sets, reps, and rest.
 
-  Generate a workout plan that is safe and achievable for the user, taking into account their medical history and fitness level. Pay particular attention to the medical history. If the user has reported medical conditions, ensure the workout plan does not include any exercises that could be harmful. If the medical history is "No specific conditions reported," you can create a general plan appropriate for their fitness level.
+  Generate a workout plan that is safe and achievable for the user, taking into account their medical history and fitness level. Pay particular attention to the medical history. If the user has reported medical conditions, ensure the workout plan does not include any exercises that could be harmful.
+
+  If the medical history is "No specific conditions reported," you can create a general plan appropriate for their fitness level.
 
   The user's information is as follows:
   - Age: {{{age}}}
@@ -70,7 +72,7 @@ const prompt = ai.definePrompt({
 
   Include a variety of exercises targeting different muscle groups. For each exercise, specify the number of sets, repetitions (reps), and rest time. You can also include short, helpful tips for some exercises.
 
-  Do not include the disclaimer in the generated plan. The application UI will handle the disclaimer.
+  Do not include a disclaimer in the generated plan. The application UI will handle the disclaimer.
   `,
 });
 
