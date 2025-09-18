@@ -3,115 +3,115 @@
     {
       "id": "push-up",
       "description": "A person doing push-ups.",
-      "imageUrl": "https://picsum.photos/seed/pushups/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-pushup/300/200",
       "imageHint": "push-up fitness"
     },
     {
       "id": "squat",
       "description": "A person doing squats.",
-      "imageUrl": "https://picsum.photos/seed/squats/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-squat/300/200",
       "imageHint": "squat exercise"
     },
     {
       "id": "plank",
       "description": "A person holding a plank position.",
-      "imageUrl": "https://picsum.photos/seed/plank/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-plank/300/200",
       "imageHint": "plank core"
     },
     {
       "id": "dumbbellrow",
       "description": "A person doing dumbbell rows.",
-      "imageUrl": "https://picsum.photos/seed/dumbbell-rows/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-dumbbell-rows/300/200",
       "imageHint": "dumbbell workout"
     },
     {
       "id": "lunge",
       "description": "A person doing lunges.",
-      "imageUrl": "https://picsum.photos/seed/lunges/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-lunges/300/200",
       "imageHint": "lunge exercise"
     },
     {
       "id": "bicepcurl",
       "description": "A person doing bicep curls.",
-      "imageUrl": "https://picsum.photos/seed/bicep-curls/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-bicep-curls/300/200",
       "imageHint": "bicep curl"
     },
     {
       "id": "jumpingjack",
       "description": "A person doing jumping jacks.",
-      "imageUrl": "https://picsum.photos/seed/jumping-jacks/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-jumping-jacks/300/200",
       "imageHint": "cardio workout"
     },
     {
       "id": "crunch",
       "description": "A person doing crunches.",
-      "imageUrl": "https://picsum.photos/seed/crunches/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-crunches/300/200",
       "imageHint": "abs workout"
     },
      {
       "id": "burpee",
       "description": "A person doing burpees.",
-      "imageUrl": "https://picsum.photos/seed/burpees/300/200",
+      "imageUrl": "https://picsum.photos/seed/fitness-burpees/300/200",
       "imageHint": "burpee crossfit"
     },
     {
       "id": "deadlift",
       "description": "A person doing a deadlift.",
-      "imageUrl": "https://picsum.photos/seed/deadlift/300/200",
+      "imageUrl": "https://picsum.photos/seed/weightlifting-deadlift/300/200",
       "imageHint": "deadlift powerlifting"
     },
     {
       "id": "benchpress",
       "description": "A person doing a bench press.",
-      "imageUrl": "https://picsum.photos/seed/benchpress/300/200",
+      "imageUrl": "https://picsum.photos/seed/weightlifting-benchpress/300/200",
       "imageHint": "bench-press gym"
     },
     {
       "id": "pull-up",
       "description": "A person doing a pull-up.",
-      "imageUrl": "https://picsum.photos/seed/pullup/300/200",
+      "imageUrl": "https://picsum.photos/seed/calisthenics-pullup/300/200",
       "imageHint": "pull-up calisthenics"
     },
     {
       "id": "overheadpress",
       "description": "A person doing an overhead press.",
-      "imageUrl": "https://picsum.photos/seed/overheadpress/300/200",
+      "imageUrl": "https://picsum.photos/seed/weightlifting-overheadpress/300/200",
       "imageHint": "shoulder press"
     },
     {
       "id": "legpress",
       "description": "A person using a leg press machine.",
-      "imageUrl": "https://picsum.photos/seed/legpress/300/200",
+      "imageUrl": "https://picsum.photos/seed/gym-legpress/300/200",
       "imageHint": "leg-press machine"
     },
     {
       "id": "cycling",
       "description": "A person on a stationary bike.",
-      "imageUrl": "https://picsum.photos/seed/cycling/300/200",
+      "imageUrl": "https://picsum.photos/seed/cardio-cycling/300/200",
       "imageHint": "indoor cycling"
     },
     {
       "id": "running",
       "description": "A person running on a treadmill.",
-      "imageUrl": "https://picsum.photos/seed/running/300/200",
+      "imageUrl": "https://picsum.photos/seed/cardio-running/300/200",
       "imageHint": "treadmill running"
     },
     {
       "id": "yoga",
       "description": "A person in a yoga pose.",
-      "imageUrl": "https://picsum.photos/seed/yoga/300/200",
+      "imageUrl": "https://picsum.photos/seed/mindfulness-yoga/300/200",
       "imageHint": "yoga meditation"
     },
     {
       "id": "stretching",
       "description": "A person stretching.",
-      "imageUrl": "https://picsum.photos/seed/stretching/300/200",
+      "imageUrl": "https://picsum.photos/seed/flexibility-stretching/300/200",
       "imageHint": "flexibility stretching"
     },
     {
       "id": "default",
       "description": "A person exercising.",
-      "imageUrl": "https://picsum.photos/seed/exercise/300/200",
+      "imageUrl": "https://picsum.photos/seed/general-exercise/300/200",
       "imageHint": "exercise fitness"
     }
   ]
