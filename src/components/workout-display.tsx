@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -34,7 +33,7 @@ export function WorkoutDisplay({ plan, onSave, onDiscard }: WorkoutDisplayProps)
         </motion.div>
       </CardHeader>
       <CardContent>
-        <Alert variant="destructive" className="mb-6 bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700/50 dark:text-yellow-300 [&>svg]:text-yellow-500 dark:[&>svg]:text-yellow-400">
+        <Alert variant="default" className="mb-6 bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700/50 dark:text-yellow-300 [&>svg]:text-yellow-500 dark:[&>svg]:text-yellow-400">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle className="font-bold">Important Disclaimer</AlertTitle>
           <AlertDescription>
@@ -58,16 +57,16 @@ export function WorkoutDisplay({ plan, onSave, onDiscard }: WorkoutDisplayProps)
                     return (
                         <motion.div 
                             key={exerciseIndex} 
-                            className="p-4 border rounded-lg bg-background/50 flex flex-col md:flex-row gap-6"
+                            className="p-4 border rounded-lg bg-background/50 flex flex-col md:flex-row items-center gap-6"
                             initial={{opacity: 0, y: 10}}
                             animate={{opacity: 1, y: 0}}
                         >
-                            <div className="md:w-1/3">
+                            <div className="flex-1">
                                 <h4 className="font-semibold text-xl">{exercise.name}</h4>
-                                <div className="mt-3 space-y-1 text-md text-muted-foreground">
-                                    {exercise.sets && <p><strong>Sets:</strong> {exercise.sets}</p>}
-                                    {exercise.reps && <p><strong>Reps:</strong> {exercise.reps}</p>}
-                                    {exercise.rest && <p><strong>Rest:</strong> {exercise.rest}</p>}
+                                <div className="mt-1 space-x-4 text-md text-muted-foreground">
+                                    {exercise.sets && <span><strong>Sets:</strong> {exercise.sets}</span>}
+                                    {exercise.reps && <span><strong>Reps:</strong> {exercise.reps}</span>}
+                                    {exercise.rest && <span><strong>Rest:</strong> {exercise.rest}</span>}
                                 </div>
                                 {exercise.tips && (
                                     <div className="mt-3 p-3 bg-accent/10 border-l-4 border-accent rounded-r-lg">
@@ -75,12 +74,12 @@ export function WorkoutDisplay({ plan, onSave, onDiscard }: WorkoutDisplayProps)
                                     </div>
                                 )}
                             </div>
-                            <div className="md:w-2/3 flex-shrink-0 relative overflow-hidden rounded-lg shadow-md">
+                            <div className="w-full md:w-48 flex-shrink-0 relative overflow-hidden rounded-lg shadow-md">
                                 <Image
                                     src={img.imageUrl}
                                     alt={`Demonstration of ${exercise.name}`}
-                                    width={600}
-                                    height={400}
+                                    width={300}
+                                    height={200}
                                     className="object-cover w-full h-auto aspect-video transform hover:scale-105 transition-transform duration-300"
                                     data-ai-hint={img.imageHint}
                                 />
