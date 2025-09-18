@@ -103,8 +103,8 @@ export default function LoginPage() {
 
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-br from-background via-purple-100 to-orange-100 dark:from-background dark:via-purple-900/20 dark:to-orange-900/20">
-       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_400px_at_50%_300px,#fbfbfb36,#0000_50%)] dark:bg-[radial-gradient(circle_400px_at_50%_300px,#ffffff18,#0000_50%)]"></div>
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
+       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_400px_at_50%_300px,#ffffff18,#0000_50%)]"></div>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -142,7 +142,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input placeholder="you@example.com" {...field} />
+                                  <Input placeholder="you@example.com" {...field} className="pl-10" />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -158,7 +158,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} />
+                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -183,7 +183,7 @@ export default function LoginPage() {
                               <FormControl>
                                  <div className="relative">
                                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input placeholder="you@example.com" {...field} />
+                                  <Input placeholder="you@example.com" {...field} className="pl-10" />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -199,7 +199,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} />
+                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -215,7 +215,7 @@ export default function LoginPage() {
                               <FormControl>
                                 <div className="relative">
                                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                  <Input type="password" placeholder="••••••••" {...field} />
+                                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
                                 </div>
                               </FormControl>
                               <FormMessage />
