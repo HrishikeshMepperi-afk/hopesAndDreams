@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { Checkbox } from "./ui/checkbox";
 import { Progress } from "./ui/progress";
 import { useMemo } from "react";
-import { RefreshCw, Dumbbell, PersonStanding, HeartPulse, Brain, Zap, Weight, Bike } from "lucide-react";
+import { RefreshCw, Dumbbell, PersonStanding, HeartPulse, Brain, Zap, Weight, Bike, Youtube } from "lucide-react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
@@ -76,6 +76,11 @@ export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: Dashbo
       },
     } satisfies import("./ui/chart").ChartConfig;
 
+    const handleWatchTutorial = (exerciseName: string) => {
+        const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(exerciseName + ' exercise tutorial')}`;
+        window.open(youtubeSearchUrl, '_blank', 'noopener,noreferrer');
+    };
+
     return (
         <Card className="w-full max-w-6xl mx-auto bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
             <CardHeader className="text-center">
@@ -109,7 +114,7 @@ export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: Dashbo
                                             return (
                                                 <motion.div 
                                                     key={exerciseIndex} 
-                                                    className={`p-4 border rounded-lg flex items-center gap-6 transition-all duration-300 ${isCompleted ? 'bg-primary/10 border-primary/30' : 'bg-background/50 border-transparent'}`}
+                                                    className={`p-4 border rounded-lg flex items-start sm:items-center gap-4 transition-all duration-300 flex-col sm:flex-row ${isCompleted ? 'bg-primary/10 border-primary/30' : 'bg-background/50 border-transparent'}`}
                                                     layout
                                                 >
                                                     <div className="flex items-center justify-center">
@@ -130,13 +135,18 @@ export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: Dashbo
                                                             {exercise.rest && <span><strong>Rest:</strong> {exercise.rest}</span>}
                                                         </div>
                                                     </div>
-                                                    <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary/10">
-                                                        <motion.div
-                                                            animate={{ scale: [1, 1.1, 1] }}
-                                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                                                        >
-                                                            <Icon className="h-10 w-10 text-primary" />
-                                                        </motion.div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button variant="outline" size="sm" onClick={() => handleWatchTutorial(exercise.name)}>
+                                                            <Youtube className="mr-2 h-4 w-4" /> Watch
+                                                        </Button>
+                                                        <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary/10">
+                                                            <motion.div
+                                                                animate={{ scale: [1, 1.1, 1] }}
+                                                                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                                                            >
+                                                                <Icon className="h-8 w-8 text-primary" />
+                                                            </motion.div>
+                                                        </div>
                                                     </div>
                                                 </motion.div>
                                             )
