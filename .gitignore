@@ -43,3 +43,13 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# Dependencies
+/node_modules
+
+# Build files
+.next/
+out/
+
+# Local Environment Variables
+.env.local
