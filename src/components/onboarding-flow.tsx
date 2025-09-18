@@ -52,18 +52,20 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
       medicalHistoryText: '',
       sex: undefined,
       fitnessLevel: undefined,
-      hasMedicalHistory: undefined
+      hasMedicalHistory: undefined,
+      age: 18,
+      height: 170,
+      weight: 70
     },
   });
 
-  const totalSteps = 5;
+  const totalSteps = 4;
   const progress = ((step + 1) / totalSteps) * 100;
 
   const handleNext = async () => {
     const fieldsByStep: (keyof z.infer<typeof formSchema>)[][] = [
       [],
-      ['age', 'sex'],
-      ['height', 'weight'],
+      ['age', 'sex', 'height', 'weight'],
       ['fitnessLevel', 'workoutHistory'],
       ['hasMedicalHistory', 'medicalHistoryText'],
     ];
@@ -116,7 +118,11 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
 
 
   const onFinalSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
-    onSubmit(data);
+    const profileData = {
+        ...data,
+        medicalHistoryText: data.hasMedicalHistory === 'yes' ? data.medicalHistoryText : 'No specific conditions reported.',
+    };
+    onSubmit(profileData);
   };
 
   const variants = {
@@ -172,11 +178,11 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                   </div>
                 )}
                 {step === 1 && (
-                  <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="age" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Age</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 30" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 30" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -184,7 +190,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                       <FormItem>
                         <FormLabel>Sex</FormLabel>
                         <FormControl>
-                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4 pt-2">
                             <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="male" /></FormControl><FormLabel className="font-normal">Male</FormLabel></FormItem>
                             <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="female" /></FormControl><FormLabel className="font-normal">Female</FormLabel></FormItem>
                             <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="other" /></FormControl><FormLabel className="font-normal">Other</FormLabel></FormItem>
@@ -193,27 +199,23 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                         <FormMessage />
                       </FormItem>
                     )} />
-                  </div>
-                )}
-                {step === 2 && (
-                  <div className="space-y-6">
-                    <FormField control={form.control} name="height" render={({ field }) => (
+                     <FormField control={form.control} name="height" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Height (cm)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 175" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 175" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <FormField control={form.control} name="weight" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Weight (kg)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 70" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 70" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                   </div>
                 )}
-                {step === 3 && (
+                {step === 2 && (
                    <div className="space-y-6">
                      <FormField control={form.control} name="fitnessLevel" render={({ field }) => (
                        <FormItem>
@@ -238,7 +240,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                      )} />
                    </div>
                 )}
-                {step === 4 && (
+                {step === 3 && (
                   <div className="space-y-6">
                      <FormField control={form.control} name="hasMedicalHistory" render={({ field }) => (
                         <FormItem className="space-y-3">
@@ -275,7 +277,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                               <div className="flex flex-wrap gap-2">
                                 {extractedConditions.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
                               </div>
-                             <FormControl><Textarea placeholder="Describe your conditions, or we'll use the info from your uploaded PDF." {...field} value={field.value ?? ''} /></FormControl>
+                             <FormControl><Textarea placeholder="Describe your conditions, or we'll use the info from your uploaded PDF." {...field} /></FormControl>
                              <FormMessage />
                           </FormItem>
                          )} />

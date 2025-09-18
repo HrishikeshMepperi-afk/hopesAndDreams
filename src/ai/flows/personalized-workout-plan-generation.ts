@@ -19,7 +19,7 @@ const WorkoutPlanInputSchema = z.object({
   medicalHistory: z
     .string()
     .describe(
-      'The medical history of the user, including any conditions or surgeries. If a PDF was uploaded, this should contain the extracted text from the PDF.'
+      'The medical history of the user, including any conditions or surgeries. If a PDF was uploaded, this should contain the extracted text from the PDF. If none, it will say "No specific conditions reported."'
     ),
   fitnessLevel: z
     .string()
@@ -55,18 +55,23 @@ const prompt = ai.definePrompt({
   output: {schema: WorkoutPlanOutputSchema},
   prompt: `You are an AI personal trainer who generates workout plans based on a user's medical history, fitness level, and workout history.
 
+  Your response MUST be a workout plan in markdown format. Start with a main title using '#'. Use '##' for each day's title (e.g., "## Day 1: Full Body Strength"). Use '###' for each exercise name (e.g., "### Push-ups"). Use bullet points ('-') for details like sets, reps, and rest.
+
+  Generate a workout plan that is safe and achievable for the user, taking into account their medical history and fitness level. Pay particular attention to the medical history. If the user has reported medical conditions, ensure the workout plan does not include any exercises that could be harmful. If the medical history is "No specific conditions reported," you can create a general plan appropriate for their fitness level.
+
   The user's information is as follows:
-  Age: {{{age}}}
-  Sex: {{{sex}}}
-  Height: {{{height}}} cm
-  Weight: {{{weight}}} kg
-  Medical History: {{{medicalHistory}}}
-  Fitness Level: {{{fitnessLevel}}}
-  Workout History: {{{workoutHistory}}}
+  - Age: {{{age}}}
+  - Sex: {{{sex}}}
+  - Height: {{{height}}} cm
+  - Weight: {{{weight}}} kg
+  - Medical History: {{{medicalHistory}}}
+  - Fitness Level: {{{fitnessLevel}}}
+  - Workout History: {{{workoutHistory}}}
 
-  Generate a workout plan that is safe and achievable for the user, taking into account their medical history and fitness level.  Pay particular attention to the medical history and ensure that the workout plan does not include any exercises that could be harmful to the user.
+  Include a variety of exercises targeting different muscle groups. For each exercise, specify the number of sets, repetitions, and rest time. You can also include short, helpful tips for some exercises.
 
-  The workout plan MUST be in markdown format. Include a variety of exercises targeting different muscle groups. For each exercise, specify the number of sets, repetitions, and rest time.
+  Finally, include this exact disclaimer at the very end of the generated plan, outside of any markdown formatting:
+  "**Important Disclaimer:** This workout plan is AI-generated. Always consult with a qualified healthcare professional or certified personal trainer before starting any new fitness program."
   `,
 });
 

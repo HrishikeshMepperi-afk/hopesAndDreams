@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import type { WorkoutPlan } from "@/lib/types";
-import { Check, X } from 'lucide-react';
+import { Check, X, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 interface WorkoutDisplayProps {
   plan: WorkoutPlan;
@@ -33,6 +34,14 @@ export function WorkoutDisplay({ plan, onSave, onDiscard }: WorkoutDisplayProps)
         </motion.div>
       </CardHeader>
       <CardContent>
+        <Alert variant="destructive" className="mb-6 bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700/50 dark:text-yellow-300 [&>svg]:text-yellow-500 dark:[&>svg]:text-yellow-400">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle className="font-bold">Important Disclaimer</AlertTitle>
+          <AlertDescription>
+            This workout plan is AI-generated. Always consult with a qualified healthcare professional or certified personal trainer before starting any new fitness program.
+          </AlertDescription>
+        </Alert>
+
         <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
           {plan.days.map((day, dayIndex) => (
             <AccordionItem value={`item-${dayIndex}`} key={dayIndex} className="border-primary/10">
