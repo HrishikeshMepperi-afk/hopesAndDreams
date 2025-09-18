@@ -48,31 +48,29 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      workoutHistory: '',
-      medicalHistoryText: '',
-      sex: undefined,
-      fitnessLevel: undefined,
-      hasMedicalHistory: undefined,
       age: 18,
+      sex: undefined,
       height: 170,
-      weight: 70
+      weight: 70,
+      hasMedicalHistory: undefined,
+      medicalHistoryText: '',
+      fitnessLevel: undefined,
+      workoutHistory: '',
     },
   });
 
-  const totalSteps = 4;
+  const totalSteps = 3;
   const progress = ((step + 1) / totalSteps) * 100;
 
   const handleNext = async () => {
     const fieldsByStep: (keyof z.infer<typeof formSchema>)[][] = [
-      [], // Welcome step
       ['age', 'sex', 'height', 'weight'],
       ['fitnessLevel', 'workoutHistory'],
       ['hasMedicalHistory'],
     ];
     
-    // Add medicalHistoryText validation only if the user said yes
     if (form.getValues('hasMedicalHistory') === 'yes') {
-      fieldsByStep[3].push('medicalHistoryText');
+      fieldsByStep[2].push('medicalHistoryText');
     }
 
     const currentFields = fieldsByStep[step] || [];
@@ -80,7 +78,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
     
     if (isValid) {
       setDirection(1);
-      setStep((s) => Math.min(s + 1, totalSteps - 1));
+      setStep((s) => Math.min(s + 1, totalSteps));
     }
   };
 
@@ -187,22 +185,6 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                 className="h-full"
               >
                 {step === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                    <motion.h2 
-                        className="text-2xl font-semibold mb-2 font-headline"
-                        initial={{opacity: 0, y: 20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: 0.2}}
-                    >Welcome to Health Journey!</motion.h2>
-                    <motion.p 
-                        className="max-w-md text-muted-foreground"
-                        initial={{opacity: 0, y: 20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: 0.3}}
-                    >This quick questionnaire will help us understand your needs to generate a safe and effective exercise plan. Let's get started!</motion.p>
-                  </div>
-                )}
-                {step === 1 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="age" render={({ field }) => (
                       <FormItem>
@@ -240,7 +222,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                     )} />
                   </div>
                 )}
-                {step === 2 && (
+                {step === 1 && (
                    <div className="space-y-6">
                      <FormField control={form.control} name="fitnessLevel" render={({ field }) => (
                        <FormItem>
@@ -265,7 +247,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                      )} />
                    </div>
                 )}
-                {step === 3 && (
+                {step === 2 && (
                   <div className="space-y-6">
                      <FormField control={form.control} name="hasMedicalHistory" render={({ field }) => (
                         <FormItem className="space-y-3">
@@ -318,7 +300,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back
               </Button>
             ) : <div />}
-            {step < totalSteps - 1 ? (
+            {step < totalSteps -1 ? (
               <Button type="button" onClick={handleNext}>
                 Next <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
