@@ -50,6 +50,9 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
     defaultValues: {
       workoutHistory: '',
       medicalHistoryText: '',
+      sex: undefined,
+      fitnessLevel: undefined,
+      hasMedicalHistory: undefined
     },
   });
 
@@ -57,15 +60,17 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
   const progress = ((step + 1) / totalSteps) * 100;
 
   const handleNext = async () => {
-    const fieldsByStep = [
+    const fieldsByStep: (keyof z.infer<typeof formSchema>)[][] = [
       [],
       ['age', 'sex'],
       ['height', 'weight'],
       ['fitnessLevel', 'workoutHistory'],
-      ['hasMedicalHistory'],
+      ['hasMedicalHistory', 'medicalHistoryText'],
     ];
 
-    const isValid = await form.trigger(fieldsByStep[step] as any);
+    const currentFields = fieldsByStep[step] || [];
+    const isValid = await form.trigger(currentFields);
+    
     if (isValid) {
       setDirection(1);
       setStep((s) => Math.min(s + 1, totalSteps - 1));
@@ -116,7 +121,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
 
   const variants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
+      x: direction > 0 ? 50 : -50,
       opacity: 0,
     }),
     center: {
@@ -124,22 +129,22 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
       opacity: 1,
     },
     exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
+      x: direction < 0 ? 50 : -50,
       opacity: 0,
     }),
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto overflow-hidden">
+    <Card className="w-full max-w-2xl mx-auto overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-3xl text-center">Your Health Journey</CardTitle>
-        <CardDescription className="text-center">Let's create a workout plan tailored just for you.</CardDescription>
-        <Progress value={progress} className="mt-4" />
+        <CardTitle className="font-headline text-3xl text-center tracking-tighter">Your Health Journey</CardTitle>
+        <CardDescription className="text-center text-lg">Let's create a workout plan tailored just for you.</CardDescription>
+        <Progress value={progress} className="mt-4 h-3" />
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onFinalSubmit)} className="h-[480px] flex flex-col">
           <CardContent className="flex-grow">
-            <AnimatePresence initial={false} custom={direction}>
+            <AnimatePresence initial={false} custom={direction} mode="wait">
               <motion.div
                 key={step}
                 custom={direction}
@@ -147,13 +152,23 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 40 }}
                 className="h-full"
               >
                 {step === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <h2 className="text-2xl font-semibold mb-2 font-headline">Welcome to Health Journey!</h2>
-                    <p className="max-w-md text-muted-foreground">This quick questionnaire will help us understand your needs to generate a safe and effective exercise plan. Let's get started!</p>
+                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                    <motion.h2 
+                        className="text-2xl font-semibold mb-2 font-headline"
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.2}}
+                    >Welcome to Health Journey!</motion.h2>
+                    <motion.p 
+                        className="max-w-md text-muted-foreground"
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.3}}
+                    >This quick questionnaire will help us understand your needs to generate a safe and effective exercise plan. Let's get started!</motion.p>
                   </div>
                 )}
                 {step === 1 && (
@@ -260,7 +275,7 @@ export function OnboardingFlow({ onSubmit, isGenerating }: OnboardingFlowProps) 
                               <div className="flex flex-wrap gap-2">
                                 {extractedConditions.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
                               </div>
-                             <FormControl><Textarea placeholder="Describe your conditions, or we'll use the info from your uploaded PDF." {...field} /></FormControl>
+                             <FormControl><Textarea placeholder="Describe your conditions, or we'll use the info from your uploaded PDF." {...field} value={field.value ?? ''} /></FormControl>
                              <FormMessage />
                           </FormItem>
                          )} />
