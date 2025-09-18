@@ -6,12 +6,10 @@ import { Dumbbell, LogOut, User, UserPlus, Loader2 } from 'lucide-react';
 
 import { OnboardingFlow } from '@/components/onboarding-flow';
 import { WorkoutDisplay } from '@/components/workout-display';
-import { Dashboard } from '@/components/dashboard';
 import { useToast } from '@/hooks/use-toast';
 import { generateWorkoutPlanAction } from '@/lib/actions';
 import { parseWorkoutPlan } from '@/lib/parsers';
-import type { UserProfile, WorkoutPlan, SavedPlan } from '@/lib/types';
-import useLocalStorage from '@/hooks/use-local-storage';
+import type { UserProfile, WorkoutPlan } from '@/lib/types';
 import { useAuth, signOut } from '@/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -27,17 +25,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-type AppStatus = 'loading' | 'onboarding' | 'generating' | 'reviewing' | 'tracking';
+type AppStatus = 'loading' | 'onboarding' | 'generating' | 'reviewing';
 
 export default function Home() {
   const { user, loading, isGuest } = useAuth();
   const router = useRouter();
   const [status, setStatus] = useState<AppStatus>('loading');
   const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-
-  const localStorageKey = user ? `health-journey-plan-${user.uid}` : 'health-journey-plan-guest';
-  const [savedPlan, setSavedPlan] = useLocalStorage<SavedPlan | null>(localStorageKey, null);
   
   const { toast } = useToast();
 
@@ -48,28 +42,18 @@ export default function Home() {
   }, [user, loading, router]);
   
   useEffect(() => {
-    // We only want to run this effect when the user object is available
     if (loading) {
       setStatus('loading');
       return;
     }
     
     if (user) {
-        if (savedPlan) {
-            setStatus('tracking');
-        } else {
-            setStatus('onboarding');
-        }
-    } else {
-        // This case handles when the user signs out.
-        // The other useEffect will redirect to /login.
-        setStatus('loading');
+        setStatus('onboarding');
     }
-  }, [savedPlan, user, loading]);
+  }, [user, loading]);
 
 
   const handleOnboardingSubmit = async (profile: UserProfile) => {
-    setUserProfile(profile);
     setStatus('generating');
     const response = await generateWorkoutPlanAction(profile);
 
@@ -87,55 +71,22 @@ export default function Home() {
     }
   };
 
-  const handleSavePlan = () => {
-    if (generatedPlan && userProfile) {
-      if (isGuest) {
-        toast({
-            title: "Guest Mode",
-            description: "Sign up to save your progress permanently.",
-        })
-      }
-      setSavedPlan({
-        plan: generatedPlan,
-        profile: userProfile,
-        completedExercises: {},
-      });
-      setStatus('tracking');
-    }
-  };
-
   const handleDiscardPlan = () => {
     setGeneratedPlan(null);
-    setUserProfile(null);
     setStatus('onboarding');
-  };
-
-  const handleUpdateProgress = (dayIndex: number, exerciseIndex: number, completed: boolean) => {
-    if (!savedPlan) return;
-    const newProgress = { ...savedPlan.completedExercises };
-    if (!newProgress[dayIndex]) {
-        newProgress[dayIndex] = {};
-    }
-    newProgress[dayIndex][exerciseIndex] = completed;
-    setSavedPlan({ ...savedPlan, completedExercises: newProgress });
-  };
-  
-  const handleGenerateNew = () => {
-    setSavedPlan(null); // This will trigger the useEffect to go back to onboarding
-    setGeneratedPlan(null);
-    setUserProfile(null);
   };
 
   const handleSignOut = async () => {
     await signOut();
-    setSavedPlan(null); // Clear local storage on sign out
     // The useEffect hook will handle the redirect to /login
+  };
+  
+  const handleStartOver = () => {
+    setGeneratedPlan(null);
+    setStatus('onboarding');
   };
 
   const handleSignUp = () => {
-    // If a guest signs up, we want to clear their local data
-    // so they start fresh after creating an account.
-    setSavedPlan(null);
     router.push('/login');
   };
 
@@ -203,10 +154,7 @@ export default function Home() {
             {status === 'onboarding' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={false} />}
             {status === 'generating' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={true} />}
             {status === 'reviewing' && generatedPlan && (
-              <WorkoutDisplay plan={generatedPlan} onSave={handleSavePlan} onDiscard={handleDiscardPlan} />
-            )}
-            {status === 'tracking' && savedPlan && (
-                <Dashboard savedPlan={savedPlan} onUpdateProgress={handleUpdateProgress} onGenerateNew={handleGenerateNew} />
+              <WorkoutDisplay plan={generatedPlan} onStartOver={handleStartOver} />
             )}
           </motion.div>
         </AnimatePresence>

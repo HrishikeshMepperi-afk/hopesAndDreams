@@ -27,9 +27,3 @@ export type UserProfile = {
   fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
   workoutHistory: string;
 };
-
-export interface SavedPlan {
-  plan: WorkoutPlan;
-  profile: UserProfile;
-  completedExercises: { [dayIndex: number]: { [exerciseIndex: number]: boolean } };
-}
