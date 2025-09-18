@@ -9,7 +9,7 @@ import { WorkoutDisplay } from '@/components/workout-display';
 import { useToast } from '@/hooks/use-toast';
 import { generateWorkoutPlanAction } from '@/lib/actions';
 import { parseWorkoutPlan } from '@/lib/parsers';
-import type { UserProfile, WorkoutPlan } from '@/lib/types';
+import type { UserProfile, WorkoutPlan, SavedPlan } from '@/lib/types';
 import { useAuth, signOut } from '@/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -23,15 +23,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { Dashboard } from '@/components/dashboard';
+import useLocalStorage from '@/hooks/use-local-storage';
 
-type AppStatus = 'loading' | 'onboarding' | 'generating' | 'reviewing';
+type AppStatus = 'loading' | 'onboarding' | 'generating' | 'reviewing' | 'dashboard';
 
 export default function Home() {
   const { user, loading, isGuest } = useAuth();
   const router = useRouter();
   const [status, setStatus] = useState<AppStatus>('loading');
   const [generatedPlan, setGeneratedPlan] = useState<WorkoutPlan | null>(null);
+  const [savedPlan, setSavedPlan] = useLocalStorage<SavedPlan | null>('workout-plan', null);
   
   const { toast } = useToast();
 
@@ -48,9 +51,13 @@ export default function Home() {
     }
     
     if (user) {
+      if (savedPlan) {
+        setStatus('dashboard');
+      } else {
         setStatus('onboarding');
+      }
     }
-  }, [user, loading]);
+  }, [user, loading, savedPlan]);
 
 
   const handleOnboardingSubmit = async (profile: UserProfile) => {
@@ -71,17 +78,33 @@ export default function Home() {
     }
   };
 
-  const handleDiscardPlan = () => {
-    setGeneratedPlan(null);
-    setStatus('onboarding');
+  const handleSavePlan = () => {
+    if (generatedPlan) {
+      setSavedPlan({ plan: generatedPlan, completedExercises: {} });
+      setStatus('dashboard');
+    }
+  };
+  
+  const handleUpdateProgress = (dayIndex: number, exerciseIndex: number, completed: boolean) => {
+    setSavedPlan(prev => {
+        if (!prev) return null;
+        const newCompleted = { ...prev.completedExercises };
+        if (!newCompleted[dayIndex]) {
+            newCompleted[dayIndex] = {};
+        }
+        newCompleted[dayIndex][exerciseIndex] = completed;
+        return { ...prev, completedExercises: newCompleted };
+    });
   };
 
   const handleSignOut = async () => {
     await signOut();
+    setSavedPlan(null);
     // The useEffect hook will handle the redirect to /login
   };
   
-  const handleStartOver = () => {
+  const handleGenerateNew = () => {
+    setSavedPlan(null);
     setGeneratedPlan(null);
     setStatus('onboarding');
   };
@@ -154,7 +177,10 @@ export default function Home() {
             {status === 'onboarding' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={false} />}
             {status === 'generating' && <OnboardingFlow onSubmit={handleOnboardingSubmit} isGenerating={true} />}
             {status === 'reviewing' && generatedPlan && (
-              <WorkoutDisplay plan={generatedPlan} onStartOver={handleStartOver} />
+              <WorkoutDisplay plan={generatedPlan} onStartOver={handleGenerateNew} onSavePlan={handleSavePlan} />
+            )}
+             {status === 'dashboard' && savedPlan && (
+              <Dashboard savedPlan={savedPlan} onUpdateProgress={handleUpdateProgress} onGenerateNew={handleGenerateNew} />
             )}
           </motion.div>
         </AnimatePresence>

@@ -4,16 +4,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { WorkoutPlan } from "@/lib/types";
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 interface WorkoutDisplayProps {
   plan: WorkoutPlan;
   onStartOver: () => void;
+  onSavePlan: () => void;
 }
 
-export function WorkoutDisplay({ plan, onStartOver }: WorkoutDisplayProps) {
+export function WorkoutDisplay({ plan, onStartOver, onSavePlan }: WorkoutDisplayProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
       <CardHeader className="text-center">
@@ -70,6 +71,7 @@ export function WorkoutDisplay({ plan, onStartOver }: WorkoutDisplayProps) {
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
         <Button size="lg" variant="outline" onClick={onStartOver}><RefreshCw className="mr-2 h-4 w-4" /> Start Over</Button>
+        <Button size="lg" onClick={onSavePlan}><Save className="mr-2 h-4 w-4" /> Save & Start</Button>
       </CardFooter>
     </Card>
   );
