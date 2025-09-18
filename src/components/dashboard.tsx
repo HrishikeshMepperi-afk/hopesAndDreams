@@ -6,10 +6,8 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Checkbox } from "./ui/checkbox";
 import { Progress } from "./ui/progress";
-import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useMemo } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Dumbbell, PersonStanding, HeartPulse, Brain, Zap, Weight, Bike } from "lucide-react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
@@ -20,11 +18,30 @@ interface DashboardProps {
     onGenerateNew: () => void;
 }
 
-function getExerciseImage(exerciseName: string) {
-    const normalizedName = exerciseName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const foundImage = PlaceHolderImages.find(img => normalizedName.includes(img.id));
-    return foundImage || PlaceHolderImages.find(img => img.id === 'default')!;
-}
+const exerciseIconMap: { [key: string]: React.ElementType } = {
+    'push-up': HeartPulse,
+    'squat': PersonStanding,
+    'plank': PersonStanding,
+    'jumping jack': Zap,
+    'lunge': PersonStanding,
+    'deadlift': Weight,
+    'bench press': Weight,
+    'running': Bike,
+    'cycling': Bike,
+    'yoga': Brain,
+    'stretch': PersonStanding,
+    'dumbbell': Dumbbell,
+};
+
+const getExerciseIcon = (exerciseName: string) => {
+    const lowerCaseName = exerciseName.toLowerCase();
+    for (const keyword in exerciseIconMap) {
+        if (lowerCaseName.includes(keyword)) {
+            return exerciseIconMap[keyword];
+        }
+    }
+    return Dumbbell;
+};
 
 export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: DashboardProps) {
     const { plan, completedExercises } = savedPlan;
@@ -87,12 +104,12 @@ export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: Dashbo
                                         transition={{staggerChildren: 0.1}}
                                     >
                                         {day.exercises.map((exercise, exerciseIndex) => {
-                                            const img = getExerciseImage(exercise.name);
                                             const isCompleted = completedExercises?.[dayIndex]?.[exerciseIndex] || false;
+                                            const Icon = getExerciseIcon(exercise.name);
                                             return (
                                                 <motion.div 
                                                     key={exerciseIndex} 
-                                                    className={`p-4 border rounded-lg flex flex-col md:flex-row items-center gap-6 transition-all duration-300 ${isCompleted ? 'bg-primary/10 border-primary/30' : 'bg-background/50 border-transparent'}`}
+                                                    className={`p-4 border rounded-lg flex items-center gap-6 transition-all duration-300 ${isCompleted ? 'bg-primary/10 border-primary/30' : 'bg-background/50 border-transparent'}`}
                                                     layout
                                                 >
                                                     <div className="flex items-center justify-center">
@@ -113,15 +130,13 @@ export function Dashboard({ savedPlan, onUpdateProgress, onGenerateNew }: Dashbo
                                                             {exercise.rest && <span><strong>Rest:</strong> {exercise.rest}</span>}
                                                         </div>
                                                     </div>
-                                                    <div className="w-full md:w-48 flex-shrink-0 relative overflow-hidden rounded-lg shadow-md">
-                                                        <Image
-                                                            src={img.imageUrl}
-                                                            alt={`Demonstration of ${exercise.name}`}
-                                                            width={300}
-                                                            height={200}
-                                                            className="object-cover w-full h-auto aspect-video transform hover:scale-105 transition-transform duration-300"
-                                                            data-ai-hint={img.imageHint}
-                                                        />
+                                                    <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary/10">
+                                                        <motion.div
+                                                            animate={{ scale: [1, 1.1, 1] }}
+                                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                                                        >
+                                                            <Icon className="h-10 w-10 text-primary" />
+                                                        </motion.div>
                                                     </div>
                                                 </motion.div>
                                             )
