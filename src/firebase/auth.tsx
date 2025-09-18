@@ -25,14 +25,12 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isGuest: boolean;
-  setIsGuest: (isGuest: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   isGuest: false,
-  setIsGuest: () => {},
 });
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
@@ -56,7 +54,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, loading, isGuest, setIsGuest}}>
+    <AuthContext.Provider value={{user, loading, isGuest}}>
       {children}
     </AuthContext.Provider>
   );

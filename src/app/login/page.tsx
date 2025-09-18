@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { signIn, signUp, signInAnonymously, useAuth } from '@/firebase/auth';
+import { signIn, signUp, signInAnonymously } from '@/firebase/auth';
 import { Separator } from '@/components/ui/separator';
 
 const loginSchema = z.object({
@@ -36,7 +36,6 @@ type SignUpInput = z.infer<typeof signUpSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { setIsGuest } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
@@ -89,7 +88,6 @@ export default function LoginPage() {
     setIsGuestLoading(true);
     try {
       await signInAnonymously();
-      setIsGuest(true);
       toast({ title: 'Welcome, Guest!', description: "You're browsing as a guest." });
       router.push('/');
     } catch (error: any) {
